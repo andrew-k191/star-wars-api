@@ -1,9 +1,8 @@
+import axios from 'axios';
 import React from 'react';
 import Table from 'react-bootstrap/Table';
 
 class StarWarsTable extends React.Component {
-  // should I make my API call here or in App.js?
-
   render() {
     return (
       <Table striped bordered hover size="sm">
@@ -17,6 +16,14 @@ class StarWarsTable extends React.Component {
             <th>Species</th>
           </tr>
         </thead>
+        <tbody>
+          {/* Each row should contain all the relevant information about each character */}
+          {/* <tr>
+            <td>{this.state.characterData[0].name}</td>
+            <td>{this.state.characterData[0].birth_year}</td>
+            <td>{this.state.characterData[0].height}</td>
+          </tr> */}
+        </tbody>
       </Table>
     );
   }

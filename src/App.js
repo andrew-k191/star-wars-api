@@ -7,21 +7,19 @@ class App extends React.Component {
     super(props);
     this.state = {
       characterData: [],
+      homeworld: '',
     };
+    this.fetchStarWarsApi = this.fetchStarWarsApi.bind(this);
   }
 
-  getStarWarsData() {
+  fetchStarWarsApi(httpRequest) {
     axios
-      .get('https://swapi.dev/api/people')
+      .get(httpRequest)
       .then((response) => {
-        const starWarsApiData = response.data;
-        console.log(
-          'Character data returning from App.js:',
-          starWarsApiData.results
-        );
-
+        const responseData = response.data;
+        console.log('CharacterData is: ', responseData.results);
         this.setState({
-          characterData: starWarsApiData.results,
+          characterData: responseData.results,
         });
       })
       .catch((error) => {
@@ -30,7 +28,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.getStarWarsData();
+    this.fetchStarWarsApi('https://swapi.dev/api/people');
   }
 
   render() {

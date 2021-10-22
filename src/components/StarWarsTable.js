@@ -19,6 +19,9 @@ const StarWarsTable = (props) => {
           return (
             <tr key={character.name}>
               <td>{character.name}</td>
+              <td>{character.birth_year}</td>
+              <td>{character.height}</td>
+              <td>{character.mass}</td>
             </tr>
           );
         })}

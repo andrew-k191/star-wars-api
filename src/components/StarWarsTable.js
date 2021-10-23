@@ -15,14 +15,14 @@ const StarWarsTable = (props) => {
         </tr>
       </thead>
       <tbody>
-        {props.characters.map((character) => {
+        {props.swapiCharacters.map((swapiCharacter) => {
           return (
-            <tr key={character.name}>
-              <td>{character.name}</td>
-              <td>{character.birth_year}</td>
-              <td>{character.height}</td>
-              <td>{character.mass}</td>
-              {/* <td>{props.homeworld[character.name]}</td> */}
+            <tr key={swapiCharacter.name}>
+              <td>{swapiCharacter.name}</td>
+              <td>{swapiCharacter.birth_year}</td>
+              <td>{swapiCharacter.height}</td>
+              <td>{swapiCharacter.mass}</td>
+              <td>{swapiCharacter.planet}</td>
             </tr>
           );
         })}

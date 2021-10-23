@@ -6,62 +6,34 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      characters: [],
-      homeworld: [],
+      swapiCharacters: [],
     };
-    this.fetchStarWarsApi = this.fetchStarWarsApi.bind(this);
-    this.fetchHomeworld = this.fetchHomeworld.bind(this);
+    this.fetchSwapiCharacters = this.fetchSwapiCharacters.bind(this);
   }
 
-  fetchStarWarsApi(httpRequest) {
-    axios
-      .get(httpRequest)
-      .then((response) => {
-        const characterData = response.data;
-        console.log('CharacterData is: ', characterData.results);
-        this.setState(
-          {
-            characters: characterData.results,
-          },
-          // Callback function
-          () => {
-            for (let character of characterData.results) {
-              this.fetchHomeworld(character);
-            }
-          }
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
-  fetchHomeworld(character) {
-    const homeworldUrl = character.homeworld;
-    axios.get(homeworldUrl).then((response) => {
-      const homeworldData = response.data;
-      console.log('Character Name: ', character.name);
-      console.log("This character's homeworld is: ", homeworldData.name);
-      const homeworlds = this.state.homeworld;
-
-      // this.setState({
-      //   homeworld: [...homeworlds, ([character.name] = homeworldData.name)],
-      // });
+  async fetchSwapiCharacters() {
+    const swapiResponse = await axios('https://swapi.dev/api/people');
+    const swapiCharacters = swapiResponse.data.results;
+    for (let swapiCharacter of swapiCharacters) {
+      const homeworldResponse = await axios(swapiCharacter.homeworld);
+      const characterHomeworld = homeworldResponse.data.name;
+      // Append homeworld/planet to each SWAPI character object
+      swapiCharacter['planet'] = characterHomeworld;
+    }
+    this.setState({
+      swapiCharacters: swapiCharacters,
     });
   }
 
   componentDidMount() {
-    this.fetchStarWarsApi('https://swapi.dev/api/people');
+    this.fetchSwapiCharacters();
   }
 
   render() {
     return (
       <div>
         <h1>Star Wars API</h1>
-        <StarWarsTable
-          characters={this.state.characters}
-          homeworld={this.state.homeworld}
-        />
+        <StarWarsTable swapiCharacters={this.state.swapiCharacters} />
       </div>
     );
   }

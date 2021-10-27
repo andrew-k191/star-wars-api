@@ -23,6 +23,7 @@ const StarWarsTable = (props) => {
               <td>{swapiCharacter.height}</td>
               <td>{swapiCharacter.mass}</td>
               <td>{swapiCharacter.planet}</td>
+              {/* <td>{swapiCharacter.speciesName}</td> */}
             </tr>
           );
         })}

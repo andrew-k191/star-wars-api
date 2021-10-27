@@ -9,6 +9,26 @@ class App extends React.Component {
       swapiCharacters: [],
     };
     this.fetchSwapiCharacters = this.fetchSwapiCharacters.bind(this);
+    this.fetchSwapiSpecies = this.fetchSwapiSpecies.bind(this);
+  }
+
+  async fetchSwapiSpecies(swapiCharacter) {
+    const characterSpeciesValue = swapiCharacter.species;
+    // check if the value is an array and not empty
+    if (
+      Array.isArray(characterSpeciesValue) &&
+      characterSpeciesValue.length !== 0
+    ) {
+      for (let speciesUrl of characterSpeciesValue) {
+        const response = await axios(speciesUrl);
+        const speciesName = response.data.name;
+        swapiCharacter['speciesName'] = speciesName;
+      }
+    }
+    // if the array is empty the character should be a human
+    else {
+      swapiCharacter['speciesName'] = 'human';
+    }
   }
 
   async fetchSwapiCharacters() {
@@ -19,6 +39,9 @@ class App extends React.Component {
       const characterHomeworld = homeworldResponse.data.name;
       // Append homeworld/planet to each SWAPI character object
       swapiCharacter['planet'] = characterHomeworld;
+
+      this.fetchSwapiSpecies(swapiCharacter);
+      console.log(swapiCharacter.speciesName);
     }
     this.setState({
       swapiCharacters: swapiCharacters,

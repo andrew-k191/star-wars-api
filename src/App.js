@@ -13,21 +13,26 @@ class App extends React.Component {
   }
 
   async fetchSwapiSpecies(swapiCharacter) {
-    const characterSpeciesValue = swapiCharacter.species;
-    // check if the value is an array and not empty
+    const characterSpeciesArray = swapiCharacter.species;
+    const speciesPromise = characterSpeciesArray.map(async (speciesUrl) => {
+      const speciesResponse = await axios(speciesUrl);
+      return speciesResponse;
+    });
+
+    const speciesPromiseResolved = await Promise.all(speciesPromise);
+
     if (
-      Array.isArray(characterSpeciesValue) &&
-      characterSpeciesValue.length !== 0
+      Array.isArray(speciesPromiseResolved) &&
+      speciesPromiseResolved.length !== 0
     ) {
-      for (let speciesUrl of characterSpeciesValue) {
-        const response = await axios(speciesUrl);
-        const speciesName = response.data.name;
+      speciesPromiseResolved.forEach((resolvedPromise) => {
+        const speciesName = resolvedPromise.data.name;
         swapiCharacter['speciesName'] = speciesName;
-      }
-    }
-    // if the array is empty the character should be a human
-    else {
-      swapiCharacter['speciesName'] = 'human';
+      });
+      // const speciesName = speciesPromiseResolved[0].data.name;
+      // swapiCharacter['speciesName'] = speciesName;
+    } else {
+      swapiCharacter['speciesName'] = 'Human';
     }
   }
 
@@ -41,7 +46,7 @@ class App extends React.Component {
       swapiCharacter['planet'] = characterHomeworld;
 
       this.fetchSwapiSpecies(swapiCharacter);
-      console.log(swapiCharacter.speciesName);
+      console.log(swapiCharacter.species);
     }
     this.setState({
       swapiCharacters: swapiCharacters,

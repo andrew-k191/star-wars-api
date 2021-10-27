@@ -22,8 +22,8 @@ const StarWarsTable = (props) => {
               <td>{swapiCharacter.birth_year}</td>
               <td>{swapiCharacter.height}</td>
               <td>{swapiCharacter.mass}</td>
-              <td>{swapiCharacter.planet}</td>
-              <td>{swapiCharacter.speciesName}</td>
+              <td>{swapiCharacter.characterHomeworld}</td>
+              <td>{swapiCharacter.characterSpecies}</td>
             </tr>
           );
         })}

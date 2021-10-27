@@ -8,53 +8,39 @@ class App extends React.Component {
     this.state = {
       swapiCharacters: [],
     };
+    // this.fetchSwapiSpecies = this.fetchSwapiSpecies.bind(this);
+    // this.fetchSwapiHomeworlds = this.fetchSwapiHomeworlds(this);
     this.fetchSwapiCharacters = this.fetchSwapiCharacters.bind(this);
-    this.fetchSwapiSpecies = this.fetchSwapiSpecies.bind(this);
   }
 
   async fetchSwapiSpecies(swapiCharacter) {
-    const characterSpeciesArray = swapiCharacter.species;
-    const speciesPromise = characterSpeciesArray.map(async (speciesUrl) => {
-      const speciesResponse = await axios(speciesUrl);
-      return speciesResponse;
-    });
-
-    const speciesPromiseResolved = await Promise.all(speciesPromise);
-
-    if (
-      Array.isArray(speciesPromiseResolved) &&
-      speciesPromiseResolved.length !== 0
-    ) {
-      speciesPromiseResolved.forEach((resolvedPromise) => {
-        const speciesName = resolvedPromise.data.name;
-        swapiCharacter['speciesName'] = speciesName;
-      });
-      // const speciesName = speciesPromiseResolved[0].data.name;
-      // swapiCharacter['speciesName'] = speciesName;
+    if (swapiCharacter.species.length === 0) {
+      swapiCharacter['characterSpecies'] = 'Human';
     } else {
-      swapiCharacter['speciesName'] = 'Human';
+      const fetchSpecies = await axios(swapiCharacter.species[0]);
+      swapiCharacter['characterSpecies'] = fetchSpecies.data.name;
     }
   }
 
-  async fetchSwapiCharacters() {
-    const swapiResponse = await axios('https://swapi.dev/api/people');
-    const swapiCharacters = swapiResponse.data.results;
-    for (let swapiCharacter of swapiCharacters) {
-      const homeworldResponse = await axios(swapiCharacter.homeworld);
-      const characterHomeworld = homeworldResponse.data.name;
-      // Append homeworld/planet to each SWAPI character object
-      swapiCharacter['planet'] = characterHomeworld;
+  async fetchSwapiHomeworlds(swapiCharacter) {
+    const fetchHomeworlds = await axios(swapiCharacter.homeworld);
+    swapiCharacter['characterHomeworld'] = fetchHomeworlds.data.name;
+  }
 
+  async fetchSwapiCharacters(swapiRequest) {
+    const swapiCharacters = await axios(swapiRequest);
+    swapiCharacters.data.results.forEach((swapiCharacter) => {
+      this.fetchSwapiHomeworlds(swapiCharacter);
       this.fetchSwapiSpecies(swapiCharacter);
-      console.log(swapiCharacter.species);
-    }
+    });
+    // set the State of SWAPI Array of character objects
     this.setState({
-      swapiCharacters: swapiCharacters,
+      swapiCharacters: swapiCharacters.data.results,
     });
   }
 
   componentDidMount() {
-    this.fetchSwapiCharacters();
+    this.fetchSwapiCharacters('https://swapi.dev/api/people');
   }
 
   render() {

@@ -8,8 +8,6 @@ class App extends React.Component {
     this.state = {
       swapiCharacters: [],
     };
-    // this.fetchSwapiSpecies = this.fetchSwapiSpecies.bind(this);
-    // this.fetchSwapiHomeworlds = this.fetchSwapiHomeworlds(this);
     this.fetchSwapiCharacters = this.fetchSwapiCharacters.bind(this);
   }
 
@@ -29,10 +27,10 @@ class App extends React.Component {
 
   async fetchSwapiCharacters(swapiRequest) {
     const swapiCharacters = await axios(swapiRequest);
-    swapiCharacters.data.results.forEach((swapiCharacter) => {
-      this.fetchSwapiHomeworlds(swapiCharacter);
-      this.fetchSwapiSpecies(swapiCharacter);
-    });
+    for (let swapiCharacter of swapiCharacters.data.results) {
+      await this.fetchSwapiHomeworlds(swapiCharacter);
+      await this.fetchSwapiSpecies(swapiCharacter);
+    }
     // set the State of SWAPI Array of character objects
     this.setState({
       swapiCharacters: swapiCharacters.data.results,
